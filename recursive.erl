@@ -1,6 +1,6 @@
 -module(recursive).
 -export([fac/1, len/1, tail_fac/1, tail_len/1, duplicate/2, tail_duplicate/2, reverse/1, tail_reverse/1, sublist/2,
-         tail_sublist/2, zip/2, tail_zip/2]).
+         tail_sublist/2, zip/2, tail_zip/2, quicksort/1, lc_quicksort/1]).
 
 fac(0) -> 1;
 fac(N) -> N*fac(N-1).
@@ -53,3 +53,20 @@ tail_zip(L1, L2) -> reverse(tail_zip(L1, L2, [])).
 tail_zip([], _, Acc) -> Acc;
 tail_zip(_, [], Acc) -> Acc;
 tail_zip([H1|T1], [H2|T2], Acc) -> tail_zip(T1, T2, [{H1, H2} | Acc]).
+
+partition(_, [], Smaller, Larger) -> {Smaller, Larger};
+partition(Pivot, [H|T], Smaller, Larger) ->
+  if H =< Pivot -> partition(Pivot, T, [H|Smaller], Larger);
+     H > Pivot -> partition(Pivot, T, Smaller, [H|Larger])
+  end.
+
+quicksort([]) -> [];
+quicksort([Pivot|Rest]) ->
+  {Smaller, Larger} = partition(Pivot, Rest, [], []),
+  quicksort(Smaller) ++ [Pivot] ++ quicksort(Larger).
+
+lc_quicksort([]) -> [];
+lc_quicksort([Pivot|Rest]) ->
+  lc_quicksort([Smaller || Smaller <- Rest, Smaller =< Pivot])
+  ++ [Pivot] ++
+  lc_quicksort([Larger || Larger <- Rest, Larger > Pivot]).
