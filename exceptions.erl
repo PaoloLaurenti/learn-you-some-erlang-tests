@@ -53,13 +53,44 @@ whoa() ->
     Exception:Reason -> {caught, Exception, Reason}
   end.
 
-  im_impressed() ->
-    try
-      talk(),
-      _Knight = "None shall Pass!",
-      _Doubles = [N*2 || N <- lists:seq(1,100)],
-      throw(up),
-      _WiilReturnThis = tequila
-    catch
-      Exception:Reason -> {caught, Exception, Reason}
-    end.
+im_impressed() ->
+  try
+    talk(),
+    _Knight = "None shall Pass!",
+    _Doubles = [N*2 || N <- lists:seq(1,100)],
+    throw(up),
+    _WiilReturnThis = tequila
+  catch
+    Exception:Reason -> {caught, Exception, Reason}
+  end.
+
+catcher(X,Y) ->
+  case catch X/Y of
+    {'EXIT', {badarith,_}} -> "uh oh";
+    N -> N
+  end.
+
+% has_value(_, {node , 'nil'}) ->
+%   false;
+% has_value(Val, {node, {_, Val, _, _}}) ->
+%   true;
+% has_value(Val, {node, {_, _, Left, Right}}) ->
+%   case has_value(Val, Left) of
+%     true -> true;
+%     false -> has_value(Val, Right)
+%   end.
+
+has_value(Val, Tree) ->
+  try has_value1(Val, Tree) of
+    false -> false
+  catch
+    true -> true
+  end.
+
+has_value1(_, {node, 'nil'}) ->
+  false;
+has_value1(Val, {node, {_, Val, _, _}}) ->
+  throw(true);
+has_value1(Val, {node, {_, _, Left, Right}}) ->
+  has_value1(Val, Left),
+  has_value1(Val, Right).
